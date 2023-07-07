@@ -19,29 +19,28 @@ class register(View):
         return render(request,'auth/register.html')
 
     def post(self,request):
-        if request.method == 'POST' :
-            username = request.POST['username']
-            email = request.POST['email']
-            name = request.POST['name']
-            password = request.POST['password']
-            registerForm = RegisterForm(request.POST)
-            if not registerForm.is_valid():
-                return render(request,'auth/register.html',{'form':registerForm})
+        username = request.POST['username']
+        email = request.POST['email']
+        name = request.POST['name']
+        password = request.POST['password']
+        registerForm = RegisterForm(request.POST)
+        if not registerForm.is_valid():
+            return render(request,'auth/register.html',{'form':registerForm})
 
-            myUser = User.objects.create_user(username,email,password)
-            myUser.first_name = name
-            myUser.save()
+        myUser = User.objects.create_user(username,email,password)
+        myUser.first_name = name
+        myUser.save()
 
-            messages.success(request,"Your Account Has Been Successfully Created .")
+        messages.success(request,"Your Account Has Been Successfully Created .")
 
-            # Welcome Email
-            subject = "Welcome To Our Django Login !"
-            message = "Hello " + myUser.first_name  + "!! \n" + "Welcome To GFG !! \n Thank ypu For Visiting Our Website \n We have also send you a confirmation email, please confirm your email address in order to activate your account . \n\n Thanking"
-            from_email = "mohamed@yahoo.com"
-            to_list = [myUser.email]
-            send_mail(subject,message,from_email,to_list,fail_silently=True)
+        # Welcome Email
+        subject = "Welcome To Our Django Login !"
+        message = "Hello " + myUser.first_name  + "!! \n" + "Welcome To GFG !! \n Thank ypu For Visiting Our Website \n We have also send you a confirmation email, please confirm your email address in order to activate your account . \n\n Thanking"
+        from_email = "mohamed@yahoo.com"
+        to_list = [myUser.email]
+        send_mail(subject,message,from_email,to_list,fail_silently=True)
 
-            return redirect('login')
+        return redirect('login')
 
 
 
