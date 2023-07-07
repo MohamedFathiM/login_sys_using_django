@@ -11,7 +11,7 @@ def validate_letters_nums(value):
     if not value.isalnum():
         raise ValidationError('Field must contain letters and numbers')
 
-class RegisterForm(forms.Forms):
+class RegisterForm(forms.Form):
     email = forms.EmailField(label='Email',required=True, max_length=255)
     name = forms.CharField(label='Name' ,required=True, max_length=255,validators=[validate_letters_only])
     username=forms.CharField(label='Username',required=True,max_length=10,validators=[validate_letters_nums])
