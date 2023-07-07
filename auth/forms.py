@@ -11,16 +11,12 @@ def validate_letters_nums(value):
     if not value.isalnum():
         raise ValidationError('Field must contain letters and numbers')
 
-class RegisterForm(forms.Form):
+class RegisterForm(forms.Forms):
     email = forms.EmailField(label='Email',required=True, max_length=255)
     name = forms.CharField(label='Name' ,required=True, max_length=255,validators=[validate_letters_only])
     username=forms.CharField(label='Username',required=True,max_length=10,validators=[validate_letters_nums])
     password = forms.CharField(label='Password',required=True, min_length=8,widget=forms.PasswordInput)
     password_confirmation = forms.CharField(label='Confirm Password',min_length=8,required=True, widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ('email','first_name','password')
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -51,10 +47,3 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError('Passwords do not match')
 
         return cleaned_data
-
-
-    def add_error(self, field, error):
-        super().add_error(field, error)
-        old_value = self.data.get(field)
-        if old_value:
-            self.fields[field].widget.attrs.update({'value': old_value})
