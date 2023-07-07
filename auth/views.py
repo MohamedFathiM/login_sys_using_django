@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login as adminLogin ,logout as adminLogout
 from django.core.mail import send_mail
 from .forms import RegisterForm
+from django.views import View
 
 # Create your views here.
 
@@ -12,34 +13,36 @@ def home(request):
     return render(request,'auth/index.html')
 
 
-def register(request):
+class register(View):
 
-    if request.method == 'POST' :
-        username = request.POST['username']
-        email = request.POST['email']
-        name = request.POST['name']
-        password = request.POST['password']
-        registerForm = RegisterForm(request.POST)
-        if not registerForm.is_valid():
-            return render(request,'auth/register.html',{'form':registerForm})
+    def get(self,request) :
+        return render(request,'auth/register.html')
 
-        myUser = User.objects.create_user(username,email,password)
-        myUser.first_name = name
-        myUser.save()
+    def post(self,request):
+        if request.method == 'POST' :
+            username = request.POST['username']
+            email = request.POST['email']
+            name = request.POST['name']
+            password = request.POST['password']
+            registerForm = RegisterForm(request.POST)
+            if not registerForm.is_valid():
+                return render(request,'auth/register.html',{'form':registerForm})
 
-        messages.success(request,"Your Account Has Been Successfully Created .")
+            myUser = User.objects.create_user(username,email,password)
+            myUser.first_name = name
+            myUser.save()
 
-        # Welcome Email
-        subject = "Welcome To Our Django Login !"
-        message = "Hello " + myUser.first_name  + "!! \n" + "Welcome To GFG !! \n Thank ypu For Visiting Our Website \n We have also send you a confirmation email, please confirm your email address in order to activate your account . \n\n Thanking"
-        from_email = "mohamed@yahoo.com"
-        to_list = [myUser.email]
-        send_mail(subject,message,from_email,to_list,fail_silently=True)
+            messages.success(request,"Your Account Has Been Successfully Created .")
 
+            # Welcome Email
+            subject = "Welcome To Our Django Login !"
+            message = "Hello " + myUser.first_name  + "!! \n" + "Welcome To GFG !! \n Thank ypu For Visiting Our Website \n We have also send you a confirmation email, please confirm your email address in order to activate your account . \n\n Thanking"
+            from_email = "mohamed@yahoo.com"
+            to_list = [myUser.email]
+            send_mail(subject,message,from_email,to_list,fail_silently=True)
 
-        return redirect('login')
+            return redirect('login')
 
-    return render(request,'auth/register.html')
 
 
 def login(request):
