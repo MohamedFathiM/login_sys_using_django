@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate,login as adminLogin ,logout as adminLogout
 from django.core.mail import send_mail
+from .forms import RegisterForm
 
 # Create your views here.
 
@@ -18,27 +19,9 @@ def register(request):
         email = request.POST['email']
         name = request.POST['name']
         password = request.POST['password']
-        password_confirmation = request.POST['password_confirmation']
-
-        if User.objects.filter(username=username) :
-            messages.error(request,"Username has already taken")
-            return redirect('home')
-
-        if User.objects.filter(email=email) :
-            messages.error(request,"Email has already taken")
-            return redirect('home')
-
-        if len(username) > 10 :
-            messages.error(request,"Username must be under 10 chars")
-            return redirect('home')
-
-        if password != password_confirmation :
-            messages.error(request,"passwords doesn't match")
-            return redirect('home')
-
-        if not username.isalnum() :
-            messages.error(request,"Username must be alphanumeric")
-            return redirect('home')
+        registerForm = RegisterForm(request.POST)
+        if not registerForm.is_valid():
+            return render(request,'auth/register.html',{'form':registerForm})
 
         myUser = User.objects.create_user(username,email,password)
         myUser.first_name = name
