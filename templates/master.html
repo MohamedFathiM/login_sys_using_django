@@ -15,14 +15,15 @@
   <body>
     <div class="container">
     {% for message in messages %}
-      <div class="alert alert-success" role="alert">
-        {{ message }}
-      </div>
-    {% endfor %}
+      <div class="alert
+      {% if message.tags and message.tags == 'error' %}
+        alert-danger
+      {% else %}
+        alert-success
+      {% endif %}
 
-    {% for error in errors %}
-      <div class="alert alert-danger" role="alert">
-        {{  error  }}
+      " role="alert">
+        {{ message }}
       </div>
     {% endfor %}
 
